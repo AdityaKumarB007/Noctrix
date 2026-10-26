@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  neo4j:
+    image: neo4j:5-community
+    container_name: noctrix-neo4j
+    ports:
+      - "7474:7474" # HTTP / Browser interface
+      - "7687:7687" # Bolt protocol for Python driver
+    environment:
+      - NEO4J_AUTH=neo4j/password
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - neo4j_data:/data
+    restart: unless-stopped
+
+  vault:
+    image: hashicorp/vault:latest
+    container_name: noctrix-vault
+    ports:
+      - "8200:8200" # Vault API & Web UI
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
+
+volumes:
+  neo4j_data:
+    driver: local

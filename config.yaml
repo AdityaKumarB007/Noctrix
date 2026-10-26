@@ -1,0 +1,53 @@
+# NOCTRIX Configuration
+
+discovery:
+  scanners:
+    aws:
+      enabled: true
+      region: "us-east-1"
+    kubernetes:
+      enabled: true
+      kubeconfig: "~/.kube/config"
+    trufflehog:
+      enabled: true
+      target_paths:
+        - "."
+    azure:
+      enabled: true
+      fixture_path: "discovery/fixtures/azure_fixture.json"
+    gcp:
+      enabled: true
+      fixture_path: "discovery/fixtures/gcp_fixture.json"
+  max_workers: 5
+
+graph:
+  neo4j:
+    uri: "bolt://localhost:7687"
+    user: "neo4j"
+    password: "password"
+    database: "neo4j"
+
+analysis:
+  weights:
+    privilege: 0.4
+    exposure: 0.3
+    inactivity: 0.3
+  ghost_inactivity_days: 90
+  high_risk_threshold: 70.0
+
+remediation:
+  auto_remediate: true
+  high_risk_threshold: 70.0
+  aws:
+    # HARDCODED SAFETY GUARDRAIL: Only usernames in this list will ever be deactivated
+    allowed_targets:
+      - "demo-compromised-bot"
+      - "test-remediation-user"
+      - "test-leaked-key-user"
+  vault:
+    url: "http://localhost:8200"
+    token: "root"
+    mount_point: "secret"
+  slack:
+    enabled: false
+    webhook_url: "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
